@@ -5,6 +5,8 @@ var app = express();
 const webpush = require('web-push');
 var fs = require('fs');
 
+const mqtt = require('mqtt');
+
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static('static'));
@@ -27,6 +29,18 @@ const db = new sqlite3.Database('./subscriptions.db', (err) => {
    }
 })
 
+function pushIt() {
+   db.all('SELECT * FROM subscriptions', (err,rows) => {
+      if (err) {
+         res.status(400).json({"error":err.message})
+         return;
+      }
+      rows.forEach((row) => {
+         webpush.sendNotification(JSON.parse(row.subscription), "hi")
+       });
+   });
+}
+
 app.get('/subscriptions', function (req, res) {
    db.all('SELECT * FROM subscriptions', (err,rows) => {
       if (err) {
@@ -35,7 +49,13 @@ app.get('/subscriptions', function (req, res) {
       }
       res.status(200).json({rows})
    })
-})
+});
+
+app.get('/push', function (req, res) {
+   pushIt()
+   res.status(200).json({"result":"ok"})
+   
+});
 
 app.get('/', (req, res) => {
    res.send("Hello there.")
@@ -44,7 +64,7 @@ app.get('/', (req, res) => {
 app.post('/subscribe', (req, res) => {
    console.log(req.body)
    var ep = req.body.endpoint;
-   var sub = req.body.subscription;
+   var sub = JSON.stringify(req.body);
    db.run("INSERT INTO subscriptions VALUES (?,?)", [ep,sub], function(err) {
       if (err) {
          return console.log(err.message);
@@ -60,3 +80,18 @@ var server = app.listen(8081, '0.0.0.0', function () {
    
    console.log("Example app listening at http://%s:%s", host, port)
 });
+
+const client = mqtt.connect('mqtt://375lincoln.nyc', { 
+  username: 'launmon',
+  password: 'flower-kayak-pacem721!'
+});
+
+client.subscribe('water/#');
+
+client.on('message', (topic, message) => {
+   console.log(`Received message on topic ${topic}: ${message}`);
+   if ((topic === "water/binary_sensor/water/state") && (message.toString() == "ON")) {
+      console.log("pushin it!")
+      pushIt()
+   }
+ });

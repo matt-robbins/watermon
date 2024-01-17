@@ -15,11 +15,11 @@ self.addEventListener('push', function(event) {
 		data: {},
 	};
 
-	if (event.data) {
-		const d = JSON.parse(event.data.text());
-		notificationTitle = d.location +' '+ d.message;
-		notificationOptions.body = d.sass;
-	}
+	// if (event.data) {
+	// 	const d = JSON.parse(event.data.text());
+	// 	notificationTitle = d.location +' '+ d.message;
+	// 	notificationOptions.body = d.sass;
+	// }
     clients.matchAll().then(function(cli){
         console.log("clients: " +cli)
         cli[0].postMessage("hello")
