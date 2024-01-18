@@ -34,8 +34,16 @@ function pushIt() {
          res.status(400).json({"error":err.message})
          return;
       }
+
       rows.forEach((row) => {
-         webpush.sendNotification(JSON.parse(row.subscription), "hi")
+         webpush.sendNotification(JSON.parse(row.subscription), "hi").catch((err) => {
+            console.log("couldn't send notification")
+            console.log(row.subscription);
+            db.run("DELETE FROM subscriptions WHERE subscription = ?;", [row.subscription], function(err) {
+               console.log(err)
+            });
+            
+         })
        });
    });
 }
@@ -94,7 +102,7 @@ const client = mqtt.connect(mqtt_creds.host, {
 client.subscribe('water/#');
 
 client.on('message', (topic, message) => {
-   console.log(`Received message on topic ${topic}: ${message}`);
+   //console.log(`Received message on topic ${topic}: ${message}`);
    if ((topic === "water/binary_sensor/water/state") && (message.toString() == "ON")) {
       console.log("pushin it!")
       pushIt()
