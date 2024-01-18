@@ -1,0 +1,13 @@
+[Unit]
+Description=node.js instance
+Requires=nginx.service
+After=nginx.service
+[Service]
+User=launy
+Group=www-data
+WorkingDirectory=/home/launy/code/watermon
+ExecStart=node server.js
+Restart=always
+RestartSec=1
+[Install]
+WantedBy=multi-user.target
