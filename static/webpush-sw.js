@@ -3,9 +3,9 @@ self.addEventListener('install', () => {
 	self.skipWaiting();
 });
 
-self.addEventListener('activate', function(event) {
-    event.waitUntil(self.clients.claim()); // Become available to all pages
-});
+// self.addEventListener('activate', function(event) {
+//     event.waitUntil(self.clients.claim()); // Become available to all pages
+// });
 
 self.addEventListener('push', function(event) {
 	console.log('Push message received.');
@@ -20,10 +20,10 @@ self.addEventListener('push', function(event) {
 	// 	notificationTitle = d.location +' '+ d.message;
 	// 	notificationOptions.body = d.sass;
 	// }
-    clients.matchAll().then(function(cli){
-        console.log("clients: " +cli)
-        cli[0].postMessage("hello")
-    });
+    // clients.matchAll().then(function(cli){
+    //     console.log("clients: " +cli)
+    //     cli[0].postMessage("hello")
+    // });
 
 	event.waitUntil(
 		self.registration.showNotification(

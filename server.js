@@ -12,11 +12,10 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static('static'));
 
 
-var vapid_keys = JSON.parse(fs.readFileSync('secrets.json','utf8'));
-console.log(vapid_keys)
+var vapid_keys = JSON.parse(fs.readFileSync('secrets-vapid.json','utf8'));
 
 webpush.setVapidDetails(
-   'mailto:matthew.robbins@gmail.com',
+   vapid_keys.email,
    vapid_keys.publicKey,
    vapid_keys.privateKey
 );
@@ -81,9 +80,11 @@ var server = app.listen(8081, '0.0.0.0', function () {
    console.log("Example app listening at http://%s:%s", host, port)
 });
 
-const client = mqtt.connect('mqtt://375lincoln.nyc', { 
-  username: 'launmon',
-  password: 'flower-kayak-pacem721!'
+var mqtt_creds = JSON.parse(fs.readFileSync('secrets-mqtt.json','utf8'));
+
+const client = mqtt.connect(mqtt_creds.host, { 
+  username: mqtt_creds.user,
+  password: mqtt_creds.pass
 });
 
 client.subscribe('water/#');
