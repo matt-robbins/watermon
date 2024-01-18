@@ -1,17 +1,17 @@
 var express = require('express');
 const sqlite3 = require('sqlite3').verbose();
-var app = express();
-
 const webpush = require('web-push');
 var fs = require('fs');
-
 const mqtt = require('mqtt');
+
+// create Express web app
+var app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static('static'));
 
-
+// get VAPID keys from file and set up the webpush module
 var vapid_keys = JSON.parse(fs.readFileSync('secrets-vapid.json','utf8'));
 
 webpush.setVapidDetails(
@@ -20,7 +20,8 @@ webpush.setVapidDetails(
    vapid_keys.privateKey
 );
 
-//app.set("views", path.join(__dirname, "views"))
+// connect to the db for subscriptions
+// CREATE TABLE subscriptions (endpoint VARCHAR, subscription, VARCHAR);
 
 const db = new sqlite3.Database('./subscriptions.db', (err) => {
    if (err) {
@@ -47,6 +48,10 @@ function pushIt() {
        });
    });
 }
+
+//
+// SET UP Express URL handlers
+//
 
 app.get('/vapid_public', function(req,res) {
    res.send(vapid_keys.publicKey);
@@ -85,12 +90,20 @@ app.post('/subscribe', (req, res) => {
    res.send({'okay': true})
 });
 
+//
+// Start Server running
+//
+
 var server = app.listen(8081, '0.0.0.0', function () {
    var host = server.address().address
    var port = server.address().port
    
    console.log("Example app listening at http://%s:%s", host, port)
 });
+
+//
+// connect to MQTT broker and process messages, trigger web push when recieved
+//
 
 var mqtt_creds = JSON.parse(fs.readFileSync('secrets-mqtt.json','utf8'));
 
