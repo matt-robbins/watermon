@@ -40,6 +40,10 @@ function pushIt() {
    });
 }
 
+app.get('/vapid_public', function(req,res) {
+   res.send(vapid_keys.publicKey);
+});
+
 app.get('/subscriptions', function (req, res) {
    db.all('SELECT * FROM subscriptions', (err,rows) => {
       if (err) {

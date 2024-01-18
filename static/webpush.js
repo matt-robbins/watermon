@@ -1,9 +1,12 @@
 // subscribe to push notifications
 async function subscribe() {
+    const res = await fetch('/vapid_public');
+    const vapid_server_key = await res.text();
+
     const registration = await navigator.serviceWorker.register('/webpush-sw.js');
     const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: 'BLUaIGdwCItGdW7FjlENYQecIqwzAL7v2h3tZXmulIyUBGlAu19nbJCVD17LD2Vw8iRboyW8-Z5vGmgF9KnaG_Q'
+        applicationServerKey: vapid_server_key
     });
 
     await fetch('/subscribe', {
