@@ -1,0 +1,72 @@
+# Basic Config
+# https://esphome.io/guides/configuration-types.html#substitutions
+substitutions:
+
+  name: water
+
+  # https://esphome.io/components/esphome.html#esphome-creators-project
+  project_name: water.monitor
+  project_ver_num: "0.1"
+  project_ver_let: y
+
+
+esphome:
+  name: $name
+  platform: ESP32
+  board: esp32dev
+  project:
+    name: $project_name
+    version: $project_ver_num($project_ver_let)
+
+wifi:
+  networks:
+  - ssid: "goldjeep"
+    password: "beepbeep"
+  - ssid: "tmrc-guest"
+    password: "teamrachelcolin"
+  - ssid: "Lumi"
+    password: "375Linc!"
+
+logger:
+  level: WARN
+  baud_rate: 0 # (UART logging interferes with cse7766)
+
+ota:
+
+web_server:
+  port: 80
+
+mqtt:
+  topic_prefix: $name
+  discovery: false
+  broker: 375lincoln.nyc
+  port: 1883
+  username: launmon
+  password: flower-kayak-pacem721!
+
+# Device Specific Config
+
+
+uart:
+  rx_pin: RX
+  baud_rate: 4800
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO25
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "water"
+
+sensor:
+  - platform: wifi_signal
+    name: "wifi_signal"
+    update_interval: 60s
+
+time:
+  - platform: sntp
+    id: the_time
+
+status_led:
+  pin: GPIO13
