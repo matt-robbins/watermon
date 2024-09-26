@@ -22,25 +22,32 @@ webpush.setVapidDetails(
 
 // connect to the db for subscriptions
 // CREATE TABLE subscriptions (endpoint VARCHAR, subscription, VARCHAR);
+// CREATE TABLE status (name VARCHAR, status VARCHAR, time DATETIME)
 
-const db = new sqlite3.Database('./subscriptions.db', (err) => {
+const sub_db = new sqlite3.Database('./subscriptions.db', (err) => {
    if (err) {
       console.error("coulnt't open db")
    }
 })
 
-function pushIt() {
-   db.all('SELECT * FROM subscriptions', (err,rows) => {
+const stat_db = new sqlite3.Database('./status.db', (err) => {
+   if (err) {
+      console.error("coulnt't open db")
+   }
+})
+
+function pushIt(msg) {
+   sub_db.all('SELECT * FROM subscriptions', (err,rows) => {
       if (err) {
          res.status(400).json({"error":err.message})
          return;
       }
-
+      console.log("sending: " + JSON.stringify(msg));
       rows.forEach((row) => {
-         webpush.sendNotification(JSON.parse(row.subscription), "hi").catch((err) => {
+         webpush.sendNotification(JSON.parse(row.subscription), JSON.stringify(msg)).catch((err) => {
             console.log("couldn't send notification")
             console.log(row.subscription);
-            db.run("DELETE FROM subscriptions WHERE subscription = ?;", [row.subscription], function(err) {
+            sub_db.run("DELETE FROM subscriptions WHERE subscription = ?;", [row.subscription], function(err) {
                console.log(err)
             });
             
@@ -58,7 +65,7 @@ app.get('/vapid_public', function(req,res) {
 });
 
 app.get('/subscriptions', function (req, res) {
-   db.all('SELECT * FROM subscriptions', (err,rows) => {
+   sub_db.all('SELECT * FROM subscriptions', (err,rows) => {
       if (err) {
          res.status(400).json({"error":err.message})
          return;
@@ -68,7 +75,7 @@ app.get('/subscriptions', function (req, res) {
 });
 
 app.get('/push', function (req, res) {
-   pushIt()
+   pushIt([])
    res.status(200).json({"result":"ok"})
    
 });
@@ -77,11 +84,21 @@ app.get('/', (req, res) => {
    res.send("Hello there.")
 })
 
+app.get('/status', (req,res) => {
+   stat_db.all('SELECT name,status,MAX(time) as time FROM status GROUP BY name', (err,rows) => {
+      if (err) {
+         res.status(400).json({"error":err.message})
+         return;
+      }
+      res.status(200).json({rows})
+   })
+})
+
 app.post('/subscribe', (req, res) => {
    console.log(req.body)
    var ep = req.body.endpoint;
    var sub = JSON.stringify(req.body);
-   db.run("INSERT INTO subscriptions VALUES (?,?)", [ep,sub], function(err) {
+   sub_db.run("INSERT INTO subscriptions VALUES (?,?)", [ep,sub], function(err) {
       if (err) {
          return console.log(err.message);
       }
@@ -112,12 +129,28 @@ const client = mqtt.connect(mqtt_creds.host, {
   password: mqtt_creds.pass
 });
 
-client.subscribe('water/#');
+client.subscribe('pump/#');
 
 client.on('message', (topic, message) => {
    //console.log(`Received message on topic ${topic}: ${message}`);
-   if ((topic === "water/binary_sensor/water/state") && (message.toString() == "ON")) {
-      console.log("pushin it!")
-      pushIt()
-   }
+   const name = topic.split('/')[1]
+   const status = message == 'True' ? true : false;
+
+   stat_db.get('SELECT status FROM status WHERE name = ? ORDER BY time DESC LIMIT 1', name, (err,row) => {
+      if (err) {
+         res.status(400).json({"error":err.message})
+         return;
+      }
+      if (row && (row.status == status)) {
+         return
+      }
+      stat_db.run("INSERT INTO status VALUES (?,?,?)", [name,status,new Date().toISOString()], function(err) {
+         if (err) {
+            return console.log(err.message);
+         }
+         console.log(`status inserted with rowid ${this.lastID}`)
+      })
+      pushIt({"name": name, "status": status})
+   })
+
  });

@@ -6,7 +6,7 @@ After=nginx.service
 User=launy
 Group=www-data
 WorkingDirectory=/home/launy/code/watermon
-ExecStart=node server.js
+ExecStart=/home/launy/.nvm/versions/node/v21.6.0/bin/node server.js
 Restart=always
 RestartSec=1
 [Install]

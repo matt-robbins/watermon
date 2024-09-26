@@ -8,8 +8,18 @@ self.addEventListener('install', () => {
 // });
 
 self.addEventListener('push', function(event) {
-	console.log('Push message received.');
-	let notificationTitle = 'Water Detected!';
+	const channel = new BroadcastChannel('sw-messages');
+	data = event.data.json()
+	channel.postMessage(data);
+
+	if (data.name != "al"){
+		return
+	}
+	if (data.status != true) {
+		return
+	}
+
+	let notificationTitle = 'Overflow!';
 	const notificationOptions = {
 		body: 'Uh Oh.',
 		data: {},

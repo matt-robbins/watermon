@@ -20,20 +20,88 @@
     <link rel="apple-touch-icon-precomposed" sizes="152x152" href="icons/apple-touch-icon-152x152.png" />
 
     <!-- Bootstrap CSS -->
-    <!-- <link 
+    <link 
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" 
       rel="stylesheet" 
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
       crossorigin="anonymous"/>
-    <style> -->
+    <style>
+      .title {
+        padding: 1em;
+      }
+      .led {
+        border-radius: 1em;
+        width: 2em;
+        height: 2em;
+        background-color: rgb(0, 34, 0);
+      }
+      .led.red {
+        background-color: rgb(83, 38, 38);
+      }
+      .led.on {
+        background-color: lightgreen;
+      }
+      .led.red.on {
+        background-color: rgb(255, 69, 69);
+      }
+
+      .pumps {
+        display: flex;
+        justify-content: space-around;
+        align-items: stretch;
+        width: 100%;
+      }
+
+      .pumprun {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+      }
+
+      .spacer {
+        min-height: 50vh;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1em;
+        width: 100%;
+        min-height: 100vh;
+      }
+
+      body {
+        min-height: 100vh;
+      }
 
     </style>
-    <title>Water Monitor</title>
+    <title>Pump Monitor</title>
   </head>
   <body>
-    <h3>Water Monitor</h3>
-    <button onclick="subscribe()">Subscribe to Push Notifications</button>
+    <div class="container">
+      <h3 class="title">375 Lincoln Pump Monitor</h3>
+      
+      <div class="pumprun">Alarm <div class="led red" id="al"></div></div>
+      <div class="pumps">
+        <div class="pumprun">Pump #1 <div class="led" id="p1"></div></div>
+        <div class="pumprun">Pump #2 <div class="led" id="p2"></div></div>
+        <div class="pumprun">Pump #3 <div class="led" id="p3"></div></div>
+        <div class="pumprun">Pump #4 <div class="led" id="p4"></div></div>
+      </div>
+      
+      <div class="spacer"></div>
 
+    
+      <button id="sub-button" type="button" class="btn btn-outline-primary" onclick="subscribe()">Subscribe for Notifications</button>
+
+      <div><p>375 Lincoln Pl. Owner's Corp.</p></div>
+
+    </div>
     <script src="/webpush.js"></script>
+    <script src="/update.js"></script>
+    
   </body>
 </html>

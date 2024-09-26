@@ -9,6 +9,10 @@ async function subscribe() {
         applicationServerKey: vapid_server_key
     });
 
+    syncSubscription(subscription)
+}
+
+async function syncSubscription(subscription) {
     await fetch('/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
