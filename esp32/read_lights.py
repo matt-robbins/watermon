@@ -22,6 +22,8 @@ adc = [ADC(Pin(32)),
 names = ["p1","p2","p3","p4","al","r"]
 
 states = [False]*len(adc)
+
+# adc = [ADC(Pin(32))]
        
 
 [a.atten(ADC.ATTN_11DB) for a in adc]
@@ -60,9 +62,17 @@ while(True):
     for ix,s in enumerate(states):
         if s == old_states[ix] and count < 10:
             continue
-        if names[ix] == 'r':
+        if names[ix] in ['r','al']:
             continue
         mqt.publish("pump/%s/running"%names[ix], str(s))
 
     if count >= 10:
         count = 0
+        
+    if all(states[0:3]) and not all(old_states[0:3]):
+        mqt.publish("pump/al/running", str(True))
+    if not all(states[0:3]) and all(old_states[0:3]):
+        mqt.publish("pump/al/running", str(False))
+
+        
+        
