@@ -41,12 +41,12 @@ channel.addEventListener('message', event => {
 });
 
 function setSubscribed(subscribed) {
-    bt = document.getElementById("sub-button")
+    bt = document.getElementById("sub-led")
     if (subscribed){
-        bt.classList.add("active")
+        bt.classList.add("on")
     }
     else {
-        bt.classList.remove("active")
+        bt.classList.remove("on")
     }
 }
 
@@ -83,11 +83,11 @@ window.addEventListener('load', function() {
     
             // Set your UI to show they have subscribed for
             // push messages
-            // setSubscribed(true)
+            setSubscribed(true)
             
         })
         .catch((err) => {
-            console.error(`Error during getSubscription(): ${err}`);
+            this.alert(`Error during getSubscription(): ${err}`);
         });
     });
     

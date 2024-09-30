@@ -12,6 +12,7 @@ async function subscribe() {
     });
     console.log(subscription)
     syncSubscription(subscription)
+    setSubscribed(true)
 }
 
 async function syncSubscription(subscription) {

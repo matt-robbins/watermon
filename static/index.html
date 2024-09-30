@@ -35,6 +35,11 @@
         height: 2em;
         background-color: rgb(0, 34, 0);
       }
+      .led.mini {
+        border-radius: 5px;
+        width: 10px;
+        height: 10px;
+      }
       .led.red {
         background-color: rgb(83, 38, 38);
       }
@@ -52,11 +57,18 @@
         width: 100%;
       }
 
+      .rowgroup {
+        display: flex;
+        justify-content: center;
+        align-items: top;
+        gap: 5px;
+        width: 100%;
+      }
+
       .pumprun {
         display: flex;
         flex-direction: column;
         align-items: center;
-
       }
 
       .spacer {
@@ -71,6 +83,7 @@
         gap: 1em;
         width: 100%;
         min-height: 100vh;
+        max-width: 30em;
       }
 
       body {
@@ -94,8 +107,12 @@
       
       <div class="spacer"></div>
 
+      <div class="rowgroup">
+        <button id="sub-button" type="button" class="btn btn-outline-primary" onclick="subscribe()">Subscribe for Notifications</button>
+        <div class="led mini" id="sub-led"></div>
+      </div>
     
-      <button id="sub-button" type="button" class="btn btn-outline-primary" onclick="subscribe()">Subscribe for Notifications</button>
+      
 
       <div><p>375 Lincoln Pl. Owner's Corp.</p></div>
 
