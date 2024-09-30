@@ -82,7 +82,7 @@ window.addEventListener('load', function() {
     
             // Set your UI to show they have subscribed for
             // push messages
-            setSubscribed(true)
+            // setSubscribed(true)
             
         })
         .catch((err) => {
