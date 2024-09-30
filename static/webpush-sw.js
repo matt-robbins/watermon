@@ -21,7 +21,7 @@ self.addEventListener('push', function(event) {
 	// 	return
 	// }
 	var notificationTitle = 'Pump Status Change';
-	var msg = "Pump " + data.name + ": " + data.status ? "running" : "stopped";
+	var msg = "Pump " + data.name + ": " + (data.status ? "running" : "stopped");
 
 	if (data.name == "al") {
 		notificationTitle = 'Pump Alarm'
