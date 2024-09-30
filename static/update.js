@@ -52,7 +52,8 @@ function setSubscribed(subscribed) {
 
 window.addEventListener('load', function() { 
     console.log("loaded!")
-    //setInterval(getData, 10000);
+    getData()
+    setInterval(getData, 10000);
     // We need the service worker registration to check for a subscription
     navigator.serviceWorker.ready.then((serviceWorkerRegistration) => {
         // Do we already have a push message subscription?
