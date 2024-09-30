@@ -1,5 +1,5 @@
 {
-    "name": "FloodAlert",
-    "short_name": "Flood",
+    "name": "PumpMonitor",
+    "short_name": "Pumps",
     "display": "standalone"
 }
