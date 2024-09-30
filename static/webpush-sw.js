@@ -20,10 +20,16 @@ self.addEventListener('push', function(event) {
 	// if (data.status != true) {
 	// 	return
 	// }
+	var notificationTitle = 'Pump Status Change';
+	var msg = "Pump " + data.name + ": " + data.status ? "running" : "stopped";
 
-	let notificationTitle = 'Overflow!';
+	if (data.name == "al") {
+		notificationTitle = 'Pump Alarm'
+		msg = data.status ? "Uh Oh" : "Okay"
+	}
+
 	const notificationOptions = {
-		body: 'Uh Oh.',
+		body: msg,
 		data: {},
 	};
 
