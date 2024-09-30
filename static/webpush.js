@@ -4,11 +4,13 @@ async function subscribe() {
     const vapid_server_key = await res.text();
 
     const registration = await navigator.serviceWorker.register('/webpush-sw.js');
+
+    console.log(registration)
     const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: vapid_server_key
     });
-
+    console.log(subscription)
     syncSubscription(subscription)
 }
 
