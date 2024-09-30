@@ -12,12 +12,14 @@ self.addEventListener('push', function(event) {
 	data = event.data.json()
 	channel.postMessage(data);
 
-	if (data.name != "al"){
-		return
-	}
-	if (data.status != true) {
-		return
-	}
+	console.log(data)
+
+	// if (data.name != "al"){
+	// 	return
+	// }
+	// if (data.status != true) {
+	// 	return
+	// }
 
 	let notificationTitle = 'Overflow!';
 	const notificationOptions = {
