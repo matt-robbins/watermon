@@ -4,8 +4,6 @@ import network
 import umqtt.simple
 import secrets
 
-failcount = 0
-
 def connect(wlan):
     networks = secrets.networks
 
@@ -32,17 +30,22 @@ def connect(wlan):
     print("failed to connect to any network")
     reset()
 
+
+failcount = 0
+
 def send(mqt, name, status):
     global failcount
     try:
         mqt.publish("pump/%s/running"%name, str(status))
     except Exception:
-        print("failed to send status...")
+        print(f"failed to send status, count={failcount}")
         failcount += 1
+    else:
+        failcount = 0
+        
     if failcount > 10:
         print("fail count > 10, resetting")
         reset()
-    failcount = 0
 
 def run(wlan, mqt):
     adc = [ADC(Pin(32)),
