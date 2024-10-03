@@ -138,7 +138,7 @@ const client = mqtt.connect(mqtt_creds.host, {
 
 var topic = 'pump/#';
 if (argv.length > 0) {
-   topic = 'pump/test/#';
+   topic = 'pumptest/#';
 }
 client.subscribe(topic);
 
