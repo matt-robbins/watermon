@@ -112,7 +112,13 @@ app.post('/subscribe', (req, res) => {
 // Start Server running
 //
 
-var server = app.listen(8081, '0.0.0.0', function () {
+argv = process.argv.slice(2)
+port = 8081
+if (argv.length > 0) {
+   port = Number(argv[0])
+}
+
+var server = app.listen(port, '0.0.0.0', function () {
    var host = server.address().address
    var port = server.address().port
    
