@@ -1,6 +1,9 @@
 
 function showStatus(name, status) {
     el = document.getElementById(name)
+    if (el == null) {
+        return;
+    }
     if (status == 1){
         el.classList.add("on")
     }
@@ -70,7 +73,7 @@ window.addEventListener('load', function() {
     const channel = new BroadcastChannel('sw-messages');
     channel.addEventListener('message', event => {
         row = event.data
-        console.log(row.name);
+        console.log(row);
         showStatus(row.name, row.status)
     });
 

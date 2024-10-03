@@ -136,7 +136,11 @@ const client = mqtt.connect(mqtt_creds.host, {
   password: mqtt_creds.pass
 });
 
-client.subscribe('pump/#');
+var topic = 'pump/#';
+if (argv.length > 0) {
+   topic = 'pump/test/#';
+}
+client.subscribe(topic);
 
 client.on('message', (topic, message) => {
    //console.log(`Received message on topic ${topic}: ${message}`);
@@ -148,7 +152,7 @@ client.on('message', (topic, message) => {
          res.status(400).json({"error":err.message})
          return;
       }
-      console.log(row);
+
       lastupdate = new Date();
       if (row && (row.status == status)) {
          return
