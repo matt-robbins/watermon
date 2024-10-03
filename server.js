@@ -45,7 +45,7 @@ function pushIt(msg) {
       console.log("sending: " + JSON.stringify(msg));
       rows.forEach((row) => {
          webpush.sendNotification(JSON.parse(row.subscription), JSON.stringify(msg)).catch((err) => {
-            console.log("couldn't send notification")
+            console.log("couldn't send notification, deleting subscription.")
             console.log(row.subscription);
             sub_db.run("DELETE FROM subscriptions WHERE subscription = ?;", [row.subscription], function(err) {
                console.log(err)
@@ -84,21 +84,22 @@ app.get('/', (req, res) => {
    res.send("Hello there.")
 })
 
+var lastupdate = new Date(0);
+
 app.get('/status', (req,res) => {
    stat_db.all('SELECT name,status,MAX(time) as time FROM status GROUP BY name', (err,rows) => {
       if (err) {
          res.status(400).json({"error":err.message})
          return;
       }
-      res.status(200).json({rows})
+      res.status(200).json({'rows': rows, 'lastupdate': lastupdate.toISOString()})
    })
 })
 
 app.post('/subscribe', (req, res) => {
-   console.log(req.body)
    var ep = req.body.endpoint;
    var sub = JSON.stringify(req.body);
-   sub_db.run("INSERT INTO subscriptions VALUES (?,?)", [ep,sub], function(err) {
+   sub_db.run("INSERT OR REPLACE INTO subscriptions VALUES (?,?)", [ep,sub], function(err) {
       if (err) {
          return console.log(err.message);
       }
@@ -141,6 +142,7 @@ client.on('message', (topic, message) => {
          res.status(400).json({"error":err.message})
          return;
       }
+      lastupdate = new Date();
       if (row && (row.status == status)) {
          return
       }

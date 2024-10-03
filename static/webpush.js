@@ -3,7 +3,14 @@ async function subscribe() {
     const res = await fetch('/vapid_public');
     const vapid_server_key = await res.text();
 
-    const registration = await navigator.serviceWorker.register('/webpush-sw.js');
+    var registration = null
+    try {
+        registration = await navigator.serviceWorker.register('/webpush-sw.js');
+        registration.update();
+    }
+    catch (e) {
+        alert("failed to register service worker. You might need to add this webpage to your home screen.")
+    }
 
     console.log(registration)
     const subscription = await registration.pushManager.subscribe({

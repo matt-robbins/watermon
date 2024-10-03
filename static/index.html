@@ -26,14 +26,34 @@
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" 
       crossorigin="anonymous"/>
     <style>
+      :root {
+        --gled-dark-color:rgb(0, 34, 0);
+        --gled-light-color:lightgreen;
+        --rled-dark-color:rgb(73, 4, 4);
+        --rled-light-color: rgb(255, 69, 69);
+      }
       .title {
         padding: 1em;
       }
+
+      @keyframes gblink {
+        0% {background-color:var(--gled-dark-color);}
+        50% {background-color:var(--gled-light-color);}
+        100% {background-color:var(--gled-dark-color);}
+      }
+
+      @keyframes rblink {
+        0% {background-color:var(--rled-dark-color);}
+        50% {background-color:var(--rled-light-color);}
+        100% {background-color:var(--rled-dark-color);}
+      }
+
       .led {
         border-radius: 1em;
         width: 2em;
         height: 2em;
-        background-color: rgb(0, 34, 0);
+        background-color: var(--gled-dark-color);
+        transition: background-color 0.2s ease;
       }
       .led.mini {
         border-radius: 5px;
@@ -41,18 +61,24 @@
         height: 10px;
       }
       .led.red {
-        background-color: rgb(83, 38, 38);
+        background-color: var(--rled-dark-color);
       }
       .led.on {
-        background-color: lightgreen;
+        background-color: var(--gled-light-color);
+      }
+      .led.blink {
+        animation:gblink 1s infinite;
+      }
+      .led.red.blink {
+        animation:rblink 1s infinite;
       }
       .led.red.on {
-        background-color: rgb(255, 69, 69);
+        background-color: var(--rled-light-color);
       }
 
       .pumps {
         display: flex;
-        justify-content: space-around;
+        justify-content: space-between;
         align-items: stretch;
         width: 100%;
       }
@@ -63,6 +89,22 @@
         align-items: top;
         gap: 5px;
         width: 100%;
+      }
+
+      .colgroup {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: start;
+        width: 100%;
+      }
+
+      #online-indicator {
+        justify-content: start;
+      }
+
+      #mon-led {
+        align-self: center;
       }
 
       .pumprun {
@@ -80,10 +122,11 @@
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
-        gap: 1em;
+        gap: 0.5em;
         width: 100%;
         min-height: 100vh;
         max-width: 30em;
+        height: 100vh;
       }
 
       body {
@@ -95,7 +138,15 @@
   </head>
   <body>
     <div class="container">
-      <h3 class="title">375 Lincoln Pump Monitor</h3>
+      <div class="colgroup">
+        <h3 class="title">375 Lincoln Ejector Pumps</h3>
+
+        <div class="rowgroup" id="online-indicator">
+          <div>Online</div>
+          <div class="led mini blink" id="mon-led"></div>
+        </div>
+      </div>
+      
       
       <div class="pumprun">Alarm <div class="led red" id="al"></div></div>
       <div class="pumps">
@@ -108,12 +159,10 @@
       <div class="spacer"></div>
 
       <div class="rowgroup">
-        <button id="sub-button" type="button" class="btn btn-outline-primary" onclick="subscribe()">Subscribe for Notifications</button>
+        <button id="sub-button" type="button" class="btn btn-primary" onclick="subscribe()">Subscribe for Notifications</button>
         <div class="led mini" id="sub-led"></div>
       </div>
     
-      
-
       <div><p>375 Lincoln Pl. Owner's Corp.</p></div>
 
     </div>

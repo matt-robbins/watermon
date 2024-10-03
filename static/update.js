@@ -9,6 +9,18 @@ function showStatus(name, status) {
     }
 }
 
+function showOnline(lastupdate,fail) {
+    const now = new Date();
+
+    el = document.getElementById('mon-led')
+    if (fail || (now.getTime() - lastupdate.getTime() > 20000)) {
+        el.classList.remove('blink');
+    }
+    else {
+        el.classList.add('blink');
+    }
+}
+
 function getData() {
     fetch(window.location.origin + "/status")
     .then(response => {
@@ -23,10 +35,11 @@ function getData() {
             showStatus(row.name, row.status)
                 
         }); 
-
+        showOnline(new Date(userData.lastupdate), false);
     })
     .catch(error => {
         console.error('Error:', error);
+        showOnline(new Date(), true)
     }) 
 }
   
@@ -34,11 +47,6 @@ function check_status() {
     js = getData()
 }
 
-const channel = new BroadcastChannel('sw-messages');
-channel.addEventListener('message', event => {
-    row = event.data
-    showStatus(row.name, row.status)
-});
 
 function setSubscribed(subscribed) {
     bt = document.getElementById("sub-led")
@@ -52,8 +60,19 @@ function setSubscribed(subscribed) {
 
 window.addEventListener('load', function() { 
     console.log("loaded!")
-    getData()
+    getData();
     setInterval(getData, 10000);
+
+    //
+    // listen to broadcast channel from service worker
+    //
+    
+    const channel = new BroadcastChannel('sw-messages');
+    channel.addEventListener('message', event => {
+        row = event.data
+        showStatus(row.name, row.status)
+    });
+
     // We need the service worker registration to check for a subscription
     navigator.serviceWorker.ready.then((serviceWorkerRegistration) => {
         // Do we already have a push message subscription?
