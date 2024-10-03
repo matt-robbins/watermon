@@ -148,6 +148,7 @@ client.on('message', (topic, message) => {
          res.status(400).json({"error":err.message})
          return;
       }
+      console.log(row);
       lastupdate = new Date();
       if (row && (row.status == status)) {
          return

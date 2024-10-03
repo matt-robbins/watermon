@@ -70,6 +70,7 @@ window.addEventListener('load', function() {
     const channel = new BroadcastChannel('sw-messages');
     channel.addEventListener('message', event => {
         row = event.data
+        console.log(row.name);
         showStatus(row.name, row.status)
     });
 
